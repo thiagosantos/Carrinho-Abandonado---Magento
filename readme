@@ -1,7 +1,7 @@
-#license see license
+license? see license
 
 
-Magento - Carrinho Abandonado
+ThiagoSantos - Carrinho Abandonado - v 0.0.2
 
 Módulo compatível com a versão 1.5 e mais novos. 
 Para versão 1.3.x e 1.4 alterar o local do arquivo lista.phtml para ./app/design/frontend/default/default/template/ .
