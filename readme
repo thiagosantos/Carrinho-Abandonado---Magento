@@ -15,4 +15,7 @@ O usuário ao clicar em ver o carrinho, cria-se uma sessão, é feito logon do u
 
 - Template da lista de produto disponível em
 	./app/design/frontend/base/default/template/thiagosantos/carrinhoabandonado/email/quote/lista.phtml
+	
+
+A partir da próxima versão o modulo não será mais compativel com versões abaixo da 1.5 do Magento.
 
