@@ -2,90 +2,168 @@
 <!--
 /**
 * Pereira, Thiago Santos
-* http://thiagosantos.com/ 
+* http://thiagosantos.com/
 *
 * @category   ThiagoSantos
 * @package    ThiagoSantos_CarrinhoAbandonado
 */
 -->
 <config>
-	<modules>
-		<ThiagoSantos_CarrinhoAbandonado>
-			<version>0.0.1</version>
-		</ThiagoSantos_CarrinhoAbandonado>
-	</modules>
-	<global>
-		<models>
-			<carrinhoabandonado>
-				<class>ThiagoSantos_CarrinhoAbandonado_Model</class>
-			</carrinhoabandonado>
-		</models>
-		<blocks>
-			<carrinhoabandonado>
-				<class>ThiagoSantos_CarrinhoAbandonado_Block</class>
-			</carrinhoabandonado>
-		</blocks>
-		<helpers>
-			<carrinhoabandonado>
-				<class>ThiagoSantos_CarrinhoAbandonado_Helper</class>
-			</carrinhoabandonado>
-		</helpers>
-		<template>
-			<email>
-				<carrinhoabandonado_email_default>
-					<label>Carrinho Abandonado (default)</label>
-					<file>carrinho_abandonado.html</file>
-					<type>html</type>
-				</carrinhoabandonado_email_default>
-			</email>
-		</template>
-	</global>
-	<frontend>
-		<routers>
-			<carrinhoabandonado>
-				<use>standard</use>
-				<args>
-					<module>ThiagoSantos_CarrinhoAbandonado</module>
-					<frontName>carrinhoabandonado</frontName>
-				</args>
-			</carrinhoabandonado>
-		</routers>
-	</frontend>
-	<adminhtml>
-		<acl>
-			<resources>
-				<all>
-					<title>Allow Everything</title>
-				</all>
-				<admin>
-					<children>
-						<system>
-							<children>
-								<config>
-									<children>
-										<carrinhoabandonado>
-											<title>CarrinhoAbandonado - All</title>
-										</carrinhoabandonado>
-									</children>
-								</config>
-							</children>
-						</system>
-					</children>
-				</admin>
-			</resources>
-		</acl>
-	</adminhtml>
-	<!--Crontab-->
+      <modules>
+            <ThiagoSantos_CarrinhoAbandonado>
+                  <version>0.1.0</version>
+            </ThiagoSantos_CarrinhoAbandonado>
+      </modules>
+      <global>
+            <models>
+                  <carrinhoabandonado>
+                        <class>ThiagoSantos_CarrinhoAbandonado_Model</class>
+                        <resourceModel>carrinhoabandonado_mysql4</resourceModel>
+                  </carrinhoabandonado>
+                  <carrinhoabandonado_mysql4>
+                        <class>ThiagoSantos_CarrinhoAbandonado_Model_Mysql4</class>
+                        <entities>
+                              <campanha>
+                                    <table>ts_ca_campanha</table>
+                              </campanha>
+                              <email>
+                                    <table>ts_ca_email</table>
+                              </email>
+                        </entities>
+                  </carrinhoabandonado_mysql4>
+            </models>
+            <resources>
+			 <carrinhoabandonado_setup>
+                <setup>
+                    <module>ThiagoSantos_CarrinhoAbandonado</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </carrinhoabandonado_setup>
+                  <carrinhoabandonado_write>
+                        <connection>
+                              <use>core_write</use>
+                        </connection>
+                  </carrinhoabandonado_write>
+                  <carrinhoabandonado_read>
+                        <connection>
+                              <use>core_read</use>
+                        </connection>
+                  </carrinhoabandonado_read>
+            </resources>
+            <blocks>
+                  <carrinhoabandonado>
+                        <class>ThiagoSantos_CarrinhoAbandonado_Block</class>
+                  </carrinhoabandonado>
+            </blocks>
+            <helpers>
+                  <carrinhoabandonado>
+                        <class>ThiagoSantos_CarrinhoAbandonado_Helper</class>
+                  </carrinhoabandonado>
+            </helpers>
+            <template>
+                  <email>
+                        <carrinhoabandonado_email_default>
+                              <label>Carrinho Abandonado (default)</label>
+                              <file>carrinho_abandonado.html</file>
+                              <type>html</type>
+                        </carrinhoabandonado_email_default>
+                  </email>
+            </template>
+            <!-- Eventos -->
+
+      </global>
+      <frontend>
+            <routers>
+                  <carrinhoabandonado>
+                        <use>standard</use>
+                        <args>
+                              <module>ThiagoSantos_CarrinhoAbandonado</module>
+                              <frontName>carrinhoabandonado</frontName>
+                        </args>
+                  </carrinhoabandonado>
+            </routers>
+            <events>
+                  <controller_action_layout_render_before>
+                        <observers>
+                              <carrinhoabandonado_observer>
+                                    <type>singleton</type>
+                                    <class>carrinhoabandonado/renderlayout_observer</class>
+                                    <method>init</method>
+                              </carrinhoabandonado_observer>
+                        </observers>
+                  </controller_action_layout_render_before>
+                  <checkout_onepage_controller_success_action>
+                        <observers>
+                              <carrinhoabandonado_ordersave_observer>
+                                    <type>singleton</type>
+                                    <class>carrinhoabandonado/ordersave_observer</class>
+                                    <method>addCookieToOrder</method>
+                              </carrinhoabandonado_ordersave_observer>
+                        </observers>
+                  </checkout_onepage_controller_success_action>
+            </events>
+      </frontend>
+      <admin>
+            <routers>
+                  <adminhtml>   
+                        <args>                                              
+                              <modules>                                                        
+                                    <carrinhoabandonado before="Mage_Adminhtml">ThiagoSantos_CarrinhoAbandonado_Adminhtml</carrinhoabandonado>
+                              </modules>
+                        </args>
+                  </adminhtml>
+            </routers>
+      </admin>
+      <adminhtml>
+            <menu>
+                  <carrinhoabandonado module="carrinhoabandonado">
+                        <title>Carrinho Abandonado</title>
+                        <sort_order>71</sort_order>
+                        <children>
+                              <items module="carrinhoabandonado">
+                                    <title>Relatório</title>
+                                    <sort_order>0</sort_order>
+                                    <action>adminhtml/web/lod</action>
+                              </items>
+                        </children>
+                  </carrinhoabandonado>
+            </menu>
+            <acl>
+                  <resources>
+                        <all>
+                              <title>Allow Everything</title>
+                        </all>
+                        <admin>
+                              <children>
+                                    <system>
+                                          <children>
+                                                <config>
+                                                      <children>
+                                                            <carrinhoabandonado module="carrinhoabandonado">
+                                                                  <title>CarrinhoAbandonado - All</title>
+                                                            </carrinhoabandonado>
+                                                      </children>
+                                                </config>
+                                          </children>
+                                    </system>
+                              </children>
+                        </admin>
+                  </resources>
+            </acl>
+      </adminhtml>
+      <!--Crontab-->
       <crontab>
-        <jobs>
-            <thiagosantos_carrinhoabandonado>
-                <schedule>
-                    <cron_expr>05 10 * * *</cron_expr>
-                </schedule>
-                <run>
-                    <model>carrinhoabandonado/cron::execute</model>
-                </run>
-            </thiagosantos_carrinhoabandonado>
-        </jobs>
-    </crontab>
+            <jobs> 
+                  <thiagosantos_carrinhoabandonado>
+                        <schedule>
+                              <cron_expr>15,30,45,00 * * * *</cron_expr>
+                        </schedule>
+                        <run>
+                              <model>carrinhoabandonado/cron::execute</model>
+                        </run>
+                  </thiagosantos_carrinhoabandonado>
+            </jobs>
+      </crontab>
 </config>

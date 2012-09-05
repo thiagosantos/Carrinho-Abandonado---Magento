@@ -1,127 +1,228 @@
 <?php
 
 /**
-* Pereira, Thiago Santos
-* http://thiagosantos.com/ 
-*
-* @category   ThiagoSantos
-* @package    ThiagoSantos_CarrinhoAbandonado
-*/
+ * Pereira, Thiago Santos
+ * http://thiagosantos.com/
+ *
+ * @category   ThiagoSantos
+ * @package    ThiagoSantos_CarrinhoAbandonado
+ */
 
-class ThiagoSantos_CarrinhoAbandonado_Model_Gerenciador{
+ class ThiagoSantos_CarrinhoAbandonado_Model_Gerenciador {
 
-
-
-	/**
-	 * Quote Collection
-	 */
-	private $_quoteCollections = null;
-
-    public function __construct(){
-          $this->loadCollection();
-    }
+       const CAMPANHA_NOME_DEFAULT  = 'Campanha CA ';
+      /**
+       * Quote Collection
+       */
+      private $_quoteCollections    = null;
+      private $campanhaAtual        = null;
       
+      /**
+       * @todo mudar para o helper
+       */
+      private function __getCampanhaHash(){
+            return md5(date('Y-m-d'));
+      }
+
+      public function __construct() {
+            $this -> loadCollection();
+      }
+      
+      private function createCampanha(){
+            
+            Mage::log("carrinho abandonado - criando campanha ");
+            if($this->_quoteCollections->getSize()<1)
+            {
+                  throw new Exception("Não foi possível criar a campanha");
+            }
+            $campanha = Mage::getModel("carrinhoabandonado/campanha");
+            $campanha->setNome(ThiagoSantos_CarrinhoAbandonado_Model_Gerenciador::CAMPANHA_NOME_DEFAULT." - ".date("d/m/Y"));
+            $campanha->setCampanhaHash($this->__getCampanhaHash());
+            //$campanha->setTotalEmailsEnviados($this->_quoteCollections->getSize());
+            $campanha->save();
+            $this->campanhaAtual = $campanha;
+               Mage::log("carrinho abandonado - campanha criada ");
+      }
+
       /**
        * iniciador do processo
        */
-      public function _init(){            
-         
-            $collection = $this->getCollection();
+      public function _init() {
+           
             
-            foreach($collection as $quote){
-               $this->sendMailAbandonedCart($quote);
+            
+            try{
+                  $collection = $this -> getCollection();
+                  //$campanhaAtual = null;
+            
+                  //cria uma nova campanha, ou carrega uma previamente
+                  $_campanhahash = $this->__getCampanhaHash();
+                  $campanhas = Mage::getModel("carrinhoabandonado/campanha")
+                                    ->getCollection()
+                                    ->addFieldToFilter('campanha_hash',array('eq'=>$_campanhahash));
+                                    //->addAttributeToSort('campanhaid','desc');
+                                    
+                  if($campanhas->getSize()>=1)
+                        $this->campanhaAtual = $campanhas->getFirstItem();
+                  else{
+                      $this->createCampanha()  ;
+                  }
+                  
+                  //se a campanha já existir
+                  /*if($_ultimaCampanha->getCampanhaHash() == $_campanhahash){
+                        $this->campanhaAtual = $_ultimaCampanha;
+                  }
+                  else{
+                        //se a campanha não já existir
+                        $this->createCampanha();
+                  }*/
             }
+            catch(Exception $e){
+                  //$this->createCampanha();
+                  Mage::log("Exception da campanha, não tem emails suficientes para serem enviados");
+                  return;
+            }
+           
             
-      }
-      
+            //$this->campanhaAtual->setTotalEmailsEnviados($this->_quoteCollections->getSize());
+           // $this->save();
+            foreach ($collection as $quote) {
+                  $this -> sendMailAbandonedCart($quote);
+            }
 
-	/**
-	 * Carrega uma coleção de cotação realizados pelos clientes.
-	 * Seria o mesmo que o carrinho abandonado.
-	 *
-	 * @todo Adicionar opção de tempo apartir da data atual,removendo os dias definido no adim.
-	 * 	 Qtd dias atrás para enviar o email
-	 */
-	private function loadCollection(){
-             Mage::log("carrinho abandonado - loadCollection ");
-             
-		if($this->_quoteCollections != null)
-			return $this->_quoteCollections;
-		
-		$collection = Mage::getResourceModel('reports/quote_collection');
-		$collection->prepareForAbandonedReport($storeIds, $filter = null);
-           // $__dataIntervaloInit = date('Y-m-d', strtotime('-15 days', time()));
-          //  $__dataIntervaloEnd = date('Y-m-d', strtotime('-60 days', time()));
+      }
+
+      /**
+       * Carrega uma coleção de cotação realizados pelos clientes.
+       * Seria o mesmo que o carrinho abandonado.
+       *
+       * @todo Adicionar opção de tempo apartir da data atual,removendo os dias definido no adim.
+       * 	 Qtd dias atrás para enviar o email
+       */
+      private function loadCollection() {
+            Mage::log("carrinho abandonado - loadCollection ");
+
+            if ($this -> _quoteCollections != null)
+                  return $this -> _quoteCollections;
+
+            $collection = Mage::getResourceModel('reports/quote_collection');
+            $collection -> prepareForAbandonedReport($storeIds, $filter = null);
+            // $__dataIntervaloInit = date('Y-m-d', strtotime('-15 days', time()));
+            //  $__dataIntervaloEnd = date('Y-m-d', strtotime('-60 days', time()));
+
+            $__dataIntervalo = date('Y-m-d', strtotime('-5 days', time()));
             
-            $__dataIntervalo = date('Y-m-d', strtotime('-7 days', time()));
-		/*
-            $collection->getSelect()->where(  
-		                                  "main_table.created_at <= '".$__dataIntervaloInit.
-		                                  " 23:59:59' and main_table.created_at >= '".$__dataIntervaloEnd." 00:00:00'"
-                                          );
+            //$__dataIntervaloFim = date('Y-m-d', strtotime('-60 days', time()));
+            /*
+             $collection->getSelect()->where(
+             "main_table.created_at <= '".$__dataIntervaloInit.
+             " 23:59:59' and main_table.created_at >= '".$__dataIntervaloEnd." 00:00:00'"
+             );
              * */
-	     $collection->getSelect()->where("main_table.created_at <= '".$__dataIntervalo." 23:59:59' and main_table.created_at >= '".$__dataIntervalo." 00:00:00'");
-          
-	     $collection->load();
-            
-           return $this->_quoteCollections = $collection;
-	}
+            $collection -> getSelect() -> where("main_table.created_at <= '" . $__dataIntervalo . " 23:59:59' and main_table.created_at >= '" . $__dataIntervalo . " 00:00:00'");
+
+            $collection -> load();
+
+            return $this -> _quoteCollections = $collection;
+      }
 
       /**
        * Retorna uma coleção de cotação
        */
-      private function getCollection(){
-           
-            if($this->_quoteCollections != null)
-                  return $this->_quoteCollections;
-            
-            return $this->loadCollection();
+      private function getCollection() {
+            if ($this -> _quoteCollections != null)
+                  return $this -> _quoteCollections;
+
+            return $this -> loadCollection();
       }
 
-	
-	/**
+      /**
        * Envia o email por quote
        */
-	private function sendMailAbandonedCart($quote){
-	      Mage::log("carrinho abandonado - sendMailAbandonedCart ");
-            
-		$translate = Mage::getSingleton('core/translate');
-		/* @var $translate Mage_Core_Model_Translate */
-		$translate->setTranslateInline(false);
-            
+      private function sendMailAbandonedCart($quote) {
+            Mage::log("carrinho abandonado - sendMailAbandonedCart ");
+
+            $translate = Mage::getSingleton('core/translate');
+            /* @var $translate Mage_Core_Model_Translate */
+            $translate -> setTranslateInline(false);
+
             /**
              * Customer
              */
-            $customer = Mage::getModel('customer/customer')->load($quote->getCustomerId());
-            $hash = Mage::helper('carrinhoabandonado')->encrypt($customer);
+            $customer = Mage::getModel('customer/customer') -> load($quote -> getCustomerId());
+            
+            $hash = Mage::helper('carrinhoabandonado') -> encrypt($customer,
+                                                                  array('campanhaid'=>$this->campanhaAtual->getCampanhaid())
+                                                                  );
+            
+            //Configurando o email 
+            if($this->campanhaAtual->getCampanhaid()){
+                     Mage::log("carrinho abandonado - configurando email ");
+                     Mage::log("carrinho abandonado - ".$customer->getEmail()." - ".urlencode($hash));
+                     
+                  $temail = Mage::getModel('carrinhoabandonado/email') 
+                                    -> getCollection() 
+                                    -> addFieldToFilter('campanhaid', array('eq' => $this->campanhaAtual->getCampanhaid())) 
+                                    -> addFieldToFilter('email', array('eq' => $customer->getEmail()));
+                  
+                  //Verifica se o email para essa campanha já foi disparado
+                  if ($temail -> getSize() >= 1) 
+                  {
+                        return;
+                  }
+                  else{   
+                           
+                        $email = Mage::getModel("carrinhoabandonado/email");
+                        $email->setCampanhaid($this->campanhaAtual->getCampanhaid());
+                        $email->setEmail($customer->getEmail());
+                        $email->setCustomerId($customer->getId());
+                        $email->save();
+                        
+                        //vai incrementando aos poucos o final
+                        $this->campanhaAtual->setTotalEmailsEnviados( $this->campanhaAtual->getTotalEmailsEnviados()+1 );
+                        $this->campanhaAtual->save();
+                  }
+                     Mage::log("carrinho abandonado - email configurado ");
+            }
+            else
+            {
+            
+            }
+            
+            
+
+                  
+            
+         // return;
             
             /**
-             * envia eMail
+             * Envia eMail
              */
-            
+
             //Configuracao do sistema
-            $templateEmail =  Mage::getStoreConfig('carrinhoabandonado/config/ca_email_template');
+            $templateEmail = Mage::getStoreConfig('carrinhoabandonado/config/ca_email_template');
             $emailRemetente = Mage::getStoreConfig('carrinhoabandonado/config/ca_email_identity');
             //No caso de template invalido usa o default do projeto
-            if(   !isset($templateEmail) || $templateEmail==null 
-                  || $templateEmail == "" 
-                  || $templateEmail=='carrinhoabandonado_config_ca_email_template'
-              )
+            if (!isset($templateEmail) || $templateEmail == null || $templateEmail == "" || $templateEmail == 'carrinhoabandonado_config_ca_email_template')
                   $templateEmail = 'carrinhoabandonado_email_default';
-                  
-                  
-           Mage::getModel('core/email_template')
-			->setDesignConfig(array('area'=>'frontend', 'store'=>1))
-                  ->sendTransactional(
-				$templateEmail,
-				$emailRemetente,
-				$customer->getEmail(),
-				$customer->getName(),
-				array('customer' => $customer, 'quote'=>$quote, 'hash' => $hash)
-                 );
-           
-		$translate->setTranslateInline(true);
-	}
-
+            
+            $translate -> setTranslateInline(true);
+            
+            Mage::getModel('core/email_template')
+                        -> addBcc('tsantos@elnetcorp.com.br') 
+                        -> setDesignConfig(array('area' => 'frontend', 'store' => 1)) 
+                        -> sendTransactional(   $templateEmail, 
+                                    $emailRemetente, 
+                                    $customer -> getEmail(), 
+                                    $customer -> getName(), 
+                                    array('customer' => $customer, 
+                                          'quote' => $quote, 
+                                          'hash' => $hash,                                          
+                                    )
+                                );
+            
+            
+            $translate -> setTranslateInline(true);
+      }
 
 }
