@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+
+-->
+<config>
+  <modules>
+          <ThiagoSantos_CarrinhoAbandonado>
+                  <active>true</active>
+                  <codePool>local</codePool>
+          </ThiagoSantos_CarrinhoAbandonado>
+  </modules>
+</config>
