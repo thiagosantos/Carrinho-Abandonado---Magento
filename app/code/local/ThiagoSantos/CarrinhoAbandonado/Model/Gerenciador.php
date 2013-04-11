@@ -209,7 +209,7 @@
             $translate -> setTranslateInline(true);
             
             Mage::getModel('core/email_template')
-                        -> addBcc('tsantos@elnetcorp.com.br') 
+                        //-> addBcc('tsantos@elnetcorp.com.br') 
                         -> setDesignConfig(array('area' => 'frontend', 'store' => 1)) 
                         -> sendTransactional(   $templateEmail, 
                                     $emailRemetente, 
