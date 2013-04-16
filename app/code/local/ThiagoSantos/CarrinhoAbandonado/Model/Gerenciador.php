@@ -48,7 +48,13 @@
        * iniciador do processo
        */
       public function _init() {
-           
+
+          $ativo = Mage::helper("carrinhoabandonado/config")->getField("general/active");
+
+          //Verifica se o modulo está ativo
+          if(!$ativo){
+              Mage::log("CarrinhoAbandonado:: It's not enabled");
+          }
             
             
             try{
@@ -102,6 +108,12 @@
       private function loadCollection() {
             Mage::log("carrinho abandonado - loadCollection ");
 
+          //Module Config
+          //model variables
+          $daysT = Mage::helper("carrinhoabandonado/config")->getField("general/active");
+
+
+
             if ($this -> _quoteCollections != null)
                   return $this -> _quoteCollections;
 
@@ -110,6 +122,8 @@
             // $__dataIntervaloInit = date('Y-m-d', strtotime('-15 days', time()));
             //  $__dataIntervaloEnd = date('Y-m-d', strtotime('-60 days', time()));
 
+
+		
             $__dataIntervalo = date('Y-m-d', strtotime('-5 days', time()));
             
             //$__dataIntervaloFim = date('Y-m-d', strtotime('-60 days', time()));
