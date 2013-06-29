@@ -7,6 +7,7 @@
  * @package    ThiagoSantos_CarrinhoAbandonado
  *
  * @todo    Parametros do Google Analytics no pelo sistema.
+ * @todo    Encodar os paramêtros do digitados pelo usuário, criar classe para tratar os dados do Google Analytics a parte?
  *
  */
 
@@ -14,64 +15,6 @@ class ThiagoSantos_CarrinhoAbandonado_AccountController extends Mage_Core_Contro
 
       protected function _getSession() {
             return Mage::getSingleton('customer/session');
-      }
-
-      public function adodoAction() {
-            
-            $email = Mage::getModel("carrinhoabandonado/email");;
-            $email -> setCampanhaid(1);
-            $email -> setEmail("tsantos@elnetcorp.com.br");
-            $email -> setRevertido("NAO");
-            $email -> save();
-            
-            exit();
-
-            try {
-                  $campanhas = Mage::getModel("carrinhoabandonado/campanha") -> getCollection() -> addFieldToFilter('campanhaid', array('eq' => 1)) -> addAttributeToSort('campanhaid', 'desc');
-            } catch(Exception $e) {
-                  var_dump($e);
-            }
-            var_dump($campanhas -> getSize());
-            exit();
-            //$campanha = $campanhas->getFirstItem();
-
-            echo $campanha -> getNome();
-            exit();
-            foreach ($campanhas as $campanha) {
-                  echo $campanha -> getNome();
-                  echo "<Br>";
-
-            }
-
-            echo "<br><br>-----------<br><br>";
-
-            $campanhas = Mage::getModel("carrinhoabandonado/campanha") -> getCollection() -> addAttributeToSort('campanhaid', 'desc');
-
-            foreach ($campanhas as $campanha) {
-                  echo $campanha -> getNome();
-                  echo "<Br>";
-            }
-
-            var_dump($campanha);
-            // $campanha->getFirstItem();
-            // echo $campanha->getNome();
-            exit();
-            var_dump($campanha -> addAttributeToFilter("total_emails_enviados", array('eq' => '0')));
-
-            exit();
-
-            $campanha -> setNome("Campanha 2012 - 2");
-            //$campanha->save();
-
-            //echo $campanha->getCampanhaid();
-
-            $email = Mage::getModel("carrinhoabandonado/email") -> load(1);
-            $email -> setCampanhaid($campanha -> getCampanhaid());
-            $email -> setEmail("thiagorow@gmail.com");
-            $email -> setRevertido("NAO");
-            $email -> setRevertidoEm(date('Y-m-d H:i:s', time()));
-            $email -> save();
-
       }
 
       /**
@@ -86,11 +29,21 @@ class ThiagoSantos_CarrinhoAbandonado_AccountController extends Mage_Core_Contro
                   $this -> _redirect('/');
             }
 
-            //0 - id //1 - Name //2 - email //3 - data de expiracao
+            //0 - id //1 - Name //2 - email //3 - id campanha
             $csv = Mage::helper('carrinhoabandonado') -> decrypt($id);
             $_customerinfo = explode(';', $csv);
 
-            $customer = Mage::getModel('customer/customer') -> load($_customerinfo[0]);
+
+            $customerId     = $_customerinfo[0];
+            $customerName   = $_customerinfo[1];
+            $customerEmail  = $_customerinfo[2];
+            $campanhaId     = $_customerinfo[3];
+
+
+            $customer = Mage::getModel('customer/customer') -> load($customerId);
+
+            if(is_null($customer))
+                $this->_redirect("/");
 
             $session = Mage::getSingleton('customer/session');
             //logout - necessário!
@@ -98,19 +51,22 @@ class ThiagoSantos_CarrinhoAbandonado_AccountController extends Mage_Core_Contro
             //logando novamente
             $session -> setCustomer($customer);
 
-            //Adiciona os produtos no carrinho
-            $cart = $customerQuote;
+
+
 
             /**
              * No caso do Magento ter alguma trigger, evento ou ação que delete o carrinho
              * abandonado no login, ou algum outro momento o descomentar o código abaixo faz-se
              * necessário, após estudo e analise.
              */
-            /*  foreach($customerQuoteItems as $item ){
-             $params = array(
-             'product' => $item->getProduct()->getId(),
-             'qty' => $item->getQty()
-             );
+            /*
+            //Adiciona os produtos no carrinho
+            $cart = $customerQuote;
+            foreach($customerQuoteItems as $item ){
+                $params = array(
+                    'product' => $item->getProduct()->getId(),
+                    'qty' => $item->getQty()
+                );
              $cart->addProduct($item->getProduct());//,  $params);
              $cart->save();
              }
@@ -120,7 +76,7 @@ class ThiagoSantos_CarrinhoAbandonado_AccountController extends Mage_Core_Contro
             //Campanhas do Google Analytics
             //redirect
             //?utm_source=carrinho_abandonado&utm_medium=email&utm_campaign=Carrinho%2BAbandonado
-            $_params = array('_query' => array('utm_source' => 'carrinho_abandonado', 'utm_medium' => 'email', 'utm_campaign' => 'Carrinho%2BAbandonado'));
+            $_params = array('_query' => array('utm_source' => 'email', 'utm_medium' => 'carrinho_abandonado', 'utm_campaign' => 'Carrinho%2BAbandonado'));
             
             //se houver a campanha no email
             if ($_customerinfo[3]) {
@@ -154,7 +110,6 @@ class ThiagoSantos_CarrinhoAbandonado_AccountController extends Mage_Core_Contro
             }
 
             Mage::getSingleton('checkout/session') -> setCartWasUpdated(true);
-
 
             $this -> _redirect('checkout/cart/', $_params);
       }

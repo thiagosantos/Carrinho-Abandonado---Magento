@@ -11,9 +11,27 @@
 <config>
       <modules>
             <ThiagoSantos_CarrinhoAbandonado>
-                  <version>0.1.0</version>
+                  <version>0.1.2</version>
             </ThiagoSantos_CarrinhoAbandonado>
       </modules>
+	<default>
+		<carrinhoabandonado>
+			<googleanalytics>
+				<utm_source>email</utm_source>
+				<utm_medium>carrinho_abandonado</utm_medium>
+				<utm_campaign>Carrinho Abandonado</utm_campaign>
+			</googleanalytics>
+			<debug>
+				<active>0</active>
+			</debug>
+			<general>
+				<active>1</active>
+			</general>
+			<schedule>
+				<days>5</days>
+			</schedule>
+		</carrinhoabandonado>
+	</default>
       <global>
             <models>
                   <carrinhoabandonado>

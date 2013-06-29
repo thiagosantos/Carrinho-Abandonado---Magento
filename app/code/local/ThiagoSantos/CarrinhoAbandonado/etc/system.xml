@@ -46,6 +46,43 @@
                     </fields>
                 </general>
 
+		<googleanalytics>
+                    <label>Google Analytics</label>
+                    <comment><![CDATA[Configuração dos paramêtros de campanha do Google Analytics.<br>]]></comment>
+                    <frontend_type>text</frontend_type>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <sort_order>1</sort_order>
+                    <fields>
+                        <utm_source translate="label">
+                            <label>UTM Source</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </utm_source>
+                        <utm_medium translate="label">
+                            <label>UTM Medium</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </utm_medium>
+                        <utm_campaign translate="label">
+                            <label>UTM Campaign</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </utm_campaign>
+                    </fields>
+                </googleanalytics>
+
+
                 <config>
                     <label>Configuração de envio</label>
                     <comment>
@@ -77,6 +114,7 @@
                         </ca_email_identity>
                     </fields>
                 </config>
+                <!--Schedule-->
                 <schedule>
                     <label>Agendamento</label>
                     <comment>

@@ -7,7 +7,10 @@
  * @category   ThiagoSantos
  * @package    ThiagoSantos_CarrinhoAbandonado
  */
- 
+
+/**
+ * @todo - Adicionar opção de configuração do limite de tempo do cookie
+ **/
  
  class ThiagoSantos_CarrinhoAbandonado_Model_Cookie{
        

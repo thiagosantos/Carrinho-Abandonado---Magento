@@ -40,7 +40,7 @@ class ThiagoSantos_CarrinhoAbandonado_Model_Renderlayout_Observer {
       
       
       /**
-       * _init manager referer information from the user
+       * _init Manage referer information from the user
        * @param   Varien_Event_Observer $observer
        * @return  ThiagoSantos_CarrinhoAbandonado_Model_Renderlayout_Observer
        */

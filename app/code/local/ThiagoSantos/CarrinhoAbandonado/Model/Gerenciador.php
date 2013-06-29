@@ -6,6 +6,11 @@
  *
  * @category   ThiagoSantos
  * @package    ThiagoSantos_CarrinhoAbandonado
+ *
+ * @todo Adicionar a possibilidade no nome da campanha do Google Analytics substituir ao CAMPANHA_NOME_DEFAULT
+ * @todo Adicionar possibilidade de customização de variaveis aos campos do Google Analytics
+ * @todo Trocar o Mage::log pelo log do modulo
+ * @todo mudar a função __getCampanhaHash() para o Data Helper
  */
 
  class ThiagoSantos_CarrinhoAbandonado_Model_Gerenciador {
@@ -34,9 +39,16 @@
             if($this->_quoteCollections->getSize()<1)
             {
                   throw new Exception("Não foi possível criar a campanha");
+	          Mage::log("carrinho abandonado - Não foi possivel criar a campanha. Não há carrinho abandonado suficiente.");
             }
             $campanha = Mage::getModel("carrinhoabandonado/campanha");
-            $campanha->setNome(ThiagoSantos_CarrinhoAbandonado_Model_Gerenciador::CAMPANHA_NOME_DEFAULT." - ".date("d/m/Y"));
+
+	    $g_a_campanha = Mage::helper("carrinhoabandonado/config")->getField("googleanalytics/utm_campaign");
+	    if($g_a_campanha)
+		$campanha->setNome($g_a_campanha. " - ".date("d/m/Y"));
+	    else
+	        $campanha->setNome(ThiagoSantos_CarrinhoAbandonado_Model_Gerenciador::CAMPANHA_NOME_DEFAULT." - ".date("d/m/Y"));
+            
             $campanha->setCampanhaHash($this->__getCampanhaHash());
             //$campanha->setTotalEmailsEnviados($this->_quoteCollections->getSize());
             $campanha->save();
@@ -53,7 +65,8 @@
 
           //Verifica se o modulo está ativo
           if(!$ativo){
-              Mage::log("CarrinhoAbandonado:: It's not enabled");
+              Mage::log("CarrinhoAbandonado:: Disabled");
+              return;
           }
             
             
@@ -110,7 +123,7 @@
 
           //Module Config
           //model variables
-          $daysT = Mage::helper("carrinhoabandonado/config")->getField("general/active");
+          $daysT = Mage::helper("carrinhoabandonado/config")->getField("schedule/days");
 
 
 
@@ -122,9 +135,14 @@
             // $__dataIntervaloInit = date('Y-m-d', strtotime('-15 days', time()));
             //  $__dataIntervaloEnd = date('Y-m-d', strtotime('-60 days', time()));
 
+          /**
+           * É obrigatório digitar um valor númerico válido, maior que zero
+           *
+           */
+          if(is_null($daysT) || $daysT == "" || $daysT<0 || !is_numeric($daysT))
+                $daysT = 5;
 
-		
-            $__dataIntervalo = date('Y-m-d', strtotime('-5 days', time()));
+            $__dataIntervalo = date('Y-m-d', strtotime("-$daysT days", time()));
             
             //$__dataIntervaloFim = date('Y-m-d', strtotime('-60 days', time()));
             /*
@@ -134,14 +152,13 @@
              );
              * */
             $collection -> getSelect() -> where("main_table.created_at <= '" . $__dataIntervalo . " 23:59:59' and main_table.created_at >= '" . $__dataIntervalo . " 00:00:00'");
-
             $collection -> load();
 
             return $this -> _quoteCollections = $collection;
       }
 
       /**
-       * Retorna uma coleção de cotação
+       * Retorna uma coleção de cotações
        */
       private function getCollection() {
             if ($this -> _quoteCollections != null)
@@ -200,7 +217,7 @@
             }
             else
             {
-            
+                return;
             }
             
             
