@@ -211,7 +211,7 @@ extends Mage_Adminhtml_Block_Widget_Grid
       */
             
             
-            //$this->addExportType('*/*/exportSimpleCsv', Mage::helper('reports')->__('CSV'));
+            $this->addExportType('*/*/exportEmailsCsv', Mage::helper('reports')->__('CSV'));
  
             return parent::_prepareColumns();
     }

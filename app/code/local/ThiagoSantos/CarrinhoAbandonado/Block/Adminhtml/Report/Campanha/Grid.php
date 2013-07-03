@@ -83,7 +83,7 @@ extends Mage_Adminhtml_Block_Report_Grid
       */
             
             
-            $this->addExportType('*/*/exportSimpleCsv', Mage::helper('reports')->__('CSV'));
+       $this->addExportType('*/*/exportCampanhasCsv', Mage::helper('reports')->__('CSV'));
  
             return parent::_prepareColumns();
     }

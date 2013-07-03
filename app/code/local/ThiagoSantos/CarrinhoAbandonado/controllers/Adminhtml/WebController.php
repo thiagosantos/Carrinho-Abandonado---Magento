@@ -7,8 +7,8 @@ class ThiagoSantos_CarrinhoAbandonado_Adminhtml_WebController extends Mage_Admin
       public function _initAction() {
             $this -> loadLayout()
              ->_setActiveMenu('carrinhoabandonado/items')
-             ->_addBreadcrumb(Mage::helper('carrinhoabandonado')->__('Gerenciar Sonhos'), 
-                              Mage::helper('carrinhoabandonado')->__('Gerenciar Sonhos')
+             ->_addBreadcrumb(Mage::helper('carrinhoabandonado')->__('Carrinho Abandonado'),
+                              Mage::helper('carrinhoabandonado')->__('Relatório')
                              );
 
             return $this;
@@ -42,6 +42,23 @@ class ThiagoSantos_CarrinhoAbandonado_Adminhtml_WebController extends Mage_Admin
       
             return $this;
       }
-      
+
+    public function exportCampanhasCsvAction()
+    {
+        $fileName   = 'export-campanhas.csv';
+        $content    = $this->getLayout()->createBlock('carrinhoabandonado/adminhtml_report_campanha_grid')
+            ->getCsv();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    public function exportEmailsCsvAction()
+    {
+        $fileName   = 'export-emails.csv';
+        $content    = $this->getLayout()->createBlock('carrinhoabandonado/adminhtml_report_email_grid')
+            ->getCsv();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
 
 }
