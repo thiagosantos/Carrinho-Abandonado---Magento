@@ -2,10 +2,12 @@ license? see license
 
 #TODO refazer readme
 #Aviso: As próximas versões desse modulo não terão suporte para as versões abaixo do 1.5
+#Agradecimentos: 
+#Thiago Silveira - pela orientação dos campos não padrões do Magento no Report/Email/Grid.php
 
 Modulo em testes, não utilizar em produção.
 
-ThiagoSantos - Carrinho Abandonado - v 0.1.0
+ThiagoSantos - Carrinho Abandonado - v 0.1.1
 
 Módulo compatível com a versão 1.5 e mais novos. 
 Para versão 1.3.x e 1.4 alterar o local do arquivo lista.phtml para ./app/design/frontend/default/default/template/ .

@@ -1,5 +1,11 @@
 <?php
- 
+/**
+ * Pereira, Thiago Santos
+ * http://thiagosantos.com/
+ *
+ * @category   ThiagoSantos
+ * @package    ThiagoSantos_CarrinhoAbandonado
+ */
 class ThiagoSantos_CarrinhoAbandonado_Block_Adminhtml_Report_Campanha 
 //extends Mage_Adminhtml_Block_Widget_Grid_Container
 

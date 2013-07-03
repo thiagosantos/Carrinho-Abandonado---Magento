@@ -1,5 +1,13 @@
 <?php
- 
+/**
+ * Pereira, Thiago Santos
+ * http://thiagosantos.com/
+ *
+ * #Agradecimentos a Thiago Silveira pela orientação dos campos não padrões do Magento
+ *
+ * @category   ThiagoSantos
+ * @package    ThiagoSantos_CarrinhoAbandonado
+ */
 class ThiagoSantos_CarrinhoAbandonado_Block_Adminhtml_Report_Email_Grid 
 extends Mage_Adminhtml_Block_Widget_Grid
 {
@@ -23,11 +31,6 @@ extends Mage_Adminhtml_Block_Widget_Grid
               $firstname = Mage::getResourceSingleton('customer/customer')->getAttribute('firstname');     
               $lastname  = Mage::getResourceSingleton('customer/customer')->getAttribute('lastname');              
               $telephone = Mage::getResourceSingleton('customer/address')->getAttribute('telephone');
-              $dddtelephone = Mage::getResourceSingleton('customer/address')->getAttribute('dddtel');
-              $celular = Mage::getResourceSingleton('customer/address')->getAttribute('celular');
-              $ddcel = Mage::getResourceSingleton('customer/address')->getAttribute('dddcel');
-              
-              //$telephone = Mage::getResourceSingleton('customer/customer')->getAttribute('celular');
             
               $collection = Mage::getModel('carrinhoabandonado/report_email')
                               ->getCollection()
@@ -46,14 +49,7 @@ extends Mage_Adminhtml_Block_Widget_Grid
                          ',
                         array('telephone'=>'value')
                      )
-               ->joinLeft(
-                        array('address_dddtelephone_table' => $dddtelephone->getBackend()->getTable()),
-                        'address_dddtelephone_table.entity_id = address_entity_table.entity_id
-                         AND address_dddtelephone_table.attribute_id = '.(int) $dddtelephone->getAttributeId() . '
-                         ',
-                        array('dddtel'=>'value')
-                     )
-                    ->joinLeft(
+                ->joinLeft(
                         array('customer_lastname_table' => $lastname->getBackend()->getTable()),
                         'customer_lastname_table.entity_id = main_table.customer_id
                          AND customer_lastname_table.attribute_id = '.(int) $lastname->getAttributeId() . '
@@ -68,30 +64,14 @@ extends Mage_Adminhtml_Block_Widget_Grid
                         array('seller_firstname'=>'value')
                      )
              ->columns(new Zend_Db_Expr("CONCAT(`customer_firstname_table`.`value`, ' ',`customer_lastname_table`.`value`) AS fullname"))
-             ->columns(new Zend_Db_Expr("CONCAT('(',`address_dddtelephone_table`.`value`, ') ',`address_telephone_table`.`value`) AS fulltel"))
              ->group('emailid');                     
                      
-                /*$collection->getSelect()->joinLeft(array('sfoa'=>'sales_flat_order_address'),
-'main_table.entity_id = sfoa.parent_id AND sfoa.address_type="shipping"',array('sfoa.street',
-'sfoa.city','sfoa.region','sfoa.postcode','sfoa.telephone'));*/
 
-
-                //note this only retrieves the firstname lastname for seller, i think similarly we can do for buyer, isn't it?
-                
-            
-            
                 $this->setCollection($collection);
-                                            
-              /*$this->setCollection( 
-                                    );
-            */
-            
-                                                 
+
         }                                 
         parent::_prepareCollection();
-        //$this->getCollection()->initReport('carrinhoabandonado/report_email_collection');
-        //$this->getCollection()->initReport('awesome/report_simple_collection');
- 
+
     }
  
     protected function _prepareColumns()
