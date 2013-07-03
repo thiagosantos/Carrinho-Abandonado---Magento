@@ -2,8 +2,6 @@ license? see license
 
 #TODO refazer readme
 #Aviso: As próximas versões desse modulo não terão suporte para as versões abaixo do 1.5
-#Agradecimentos: 
-#Thiago Silveira - pela orientação dos campos não padrões do Magento no Report/Email/Grid.php
 
 Modulo em testes, não utilizar em produção.
 
@@ -12,9 +10,9 @@ ThiagoSantos - Carrinho Abandonado - v 0.1.1
 Módulo compatível com a versão 1.5 e mais novos. 
 Para versão 1.3.x e 1.4 alterar o local do arquivo lista.phtml para ./app/design/frontend/default/default/template/ .
 
-Alerta usuários logados que tenham colocados produtos no carrinho mas não tenham concluido a compra, e não tenham voltado em um prazo de X dias (padrao de 5), por um email com a lista de produtos deixados no carrinho.
+Alerta via email aos usuários da loja que deixaram de finalizar o pedido que o seus itens foram guardados.
+O alerta é enviado a cada X dias, 5 é o padrão, mas pode ser atualizado no admin.
 O usuário ao clicar em ver o carrinho, cria-se uma sessão, é feito logon do usuário e após ele é direcionado para a página /checkout/cart.
-
 
 - Template de email disponivel em
 	./app/locale/pt_BT/template/email/carrinho_abandonado.html
@@ -24,4 +22,8 @@ O usuário ao clicar em ver o carrinho, cria-se uma sessão, é feito logon do u
 	
 
 A partir da próxima versão o modulo não será mais compativel com versões abaixo da 1.5 do Magento.
+
+
+#Agradecimentos: 
+#Thiago Silveira - pela orientação dos campos não padrões do Magento no Report/Email/Grid.php
 
