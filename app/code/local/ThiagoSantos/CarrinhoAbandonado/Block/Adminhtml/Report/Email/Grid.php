@@ -26,7 +26,9 @@ extends Mage_Adminhtml_Block_Widget_Grid
 
     protected function _prepareCollection()
     {
-      
+        /*
+         * @todo Mover esse conteúdo para dentro de Model/Mysql4/Email/Collection.php
+         */
         if(!is_null(Mage::registry('campanhaid'))){
               $firstname = Mage::getResourceSingleton('customer/customer')->getAttribute('firstname');     
               $lastname  = Mage::getResourceSingleton('customer/customer')->getAttribute('lastname');              
@@ -69,11 +71,20 @@ extends Mage_Adminhtml_Block_Widget_Grid
 
                 $this->setCollection($collection);
 
-        }                                 
+        }
         parent::_prepareCollection();
 
     }
- 
+
+    /**
+     * Formato diferente da disposição das campanhas
+     * Para a exibição do relatório por dia mostra-se todos os campos
+     * @todo formatar as colunas variando de acordo com o filtro de exibição (day,month,year)
+     */
+    protected function _prepareColumnsToDay(){
+
+    }
+
     protected function _prepareColumns()
     {
         $this->addColumn('customer_id', array(
@@ -215,5 +226,7 @@ extends Mage_Adminhtml_Block_Widget_Grid
  
             return parent::_prepareColumns();
     }
+
+
  
 }

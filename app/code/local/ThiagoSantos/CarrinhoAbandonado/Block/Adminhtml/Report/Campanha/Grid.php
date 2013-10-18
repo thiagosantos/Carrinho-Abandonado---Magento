@@ -14,9 +14,9 @@ extends Mage_Adminhtml_Block_Report_Grid
     {
         parent::_prepareCollection();
         $this->getCollection()->initReport('carrinhoabandonado/report_campanha_collection');
-        //$this->getCollection()->initReport('awesome/report_simple_collection');
- 
     }
+
+
  
     protected function _prepareColumns()
     {
@@ -68,7 +68,9 @@ extends Mage_Adminhtml_Block_Report_Grid
                     'index'     => 'stores',
                     'is_system' => true,
             ));
-            
+
+        //Mage::log($requestData = Mage::helper('adminhtml')->prepareFilterString($this->getRequest()->getParam('filter')));
+        // :)
             
  /*
         $currencyCode = $this->getCurrentCurrencyCode();

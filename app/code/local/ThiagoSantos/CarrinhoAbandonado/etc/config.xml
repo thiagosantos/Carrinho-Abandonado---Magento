@@ -54,6 +54,7 @@
 			 <carrinhoabandonado_setup>
                 <setup>
                     <module>ThiagoSantos_CarrinhoAbandonado</module>
+		    <class>ThiagoSantos_CarrinhoAbandonado_Model_Resource_Setup</class>
                 </setup>
                 <connection>
                     <use>core_setup</use>
